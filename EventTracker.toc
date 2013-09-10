@@ -1,6 +1,6 @@
-## Interface: 50300
+## Interface: 50400
 ## Title: EventTracker
-## Version: 2.3
+## Version: 2.4
 ## Author: fmeus
 ## Notes: Event Tracker allows you to view detailed information on events/functions tracked
 ## DefaultState: enabled

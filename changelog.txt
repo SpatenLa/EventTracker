@@ -1,3 +1,6 @@
+Version 2.4 - September 11, 2013
+- Changed: Updated for 5.4.0
+
 Version 2.3 - May 22, 2013
 - Changed: Updated for 5.3.0
 
