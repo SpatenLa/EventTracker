@@ -8,6 +8,5 @@
 
 -- Events to be tracked
     ET_TRACKED_EVENTS = {
-        "GUILDBANK_UPDATE_MONEY",
-        "CHAT_MSG_MONEY"
+        "CHAT_MSG_GUILD"
     };

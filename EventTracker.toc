@@ -1,11 +1,10 @@
-## Interface: 50400
+## Interface: 60000
 ## Title: EventTracker
-## Version: 2.4
+## Version: 2.5
 ## Author: fmeus
 ## Notes: Event Tracker allows you to view detailed information on events/functions tracked
 ## DefaultState: enabled
 ## SavedVariables: ET_Data
-## Revision: $Id: EventTracker.toc 1095 2013-05-22 07:15:19Z fmeus_lgs $
 
 EventTracker_globals.lua
 EventTracker_events.lua
