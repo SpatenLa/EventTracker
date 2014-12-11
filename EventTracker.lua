@@ -317,25 +317,30 @@
     function EventTracker_EventOnClick( self, button, down )
         local event, timestamp, data, realevent, time_usage, call_stack = unpack( ET_EventDetail[ FauxScrollFrame_GetOffset( EventTracker_Details ) + self:GetID() ] );
 
-        if ( button == "LeftButton" ) then
-            if ( realevent ) then
-                ET_FrameInfo = { GetFramesRegisteredForEvent( event ) };
-                Event_Frame_FrameHeading:SetText( ET_REGISTERED_TEXT );
-                EventCallStack:SetText( "" );
-            else
-                wipe( ET_FrameInfo );
-                Event_Frame_FrameHeading:SetText( ET_CALLSTACK_TEXT );
-                EventCallStack:SetText( call_stack );
-            end;
-            ET_ArgumentInfo = data;
-            ET_CurrentEvent = event;
-            EventTracker_Scroll_Arguments();
-            EventTracker_Scroll_Frames();
-            EventTracker_UpdateUI( time_usage );
+        if ( IsShiftKeyDown() ) then
+            EventTracker:UnregisterEvent( event );
+            DEFAULT_CHAT_FRAME:AddMessage( "Event "..event.." has been removed" );
+        else
+            if ( button == "LeftButton" ) then
+                if ( realevent ) then
+                    ET_FrameInfo = { GetFramesRegisteredForEvent( event ) };
+                    Event_Frame_FrameHeading:SetText( ET_REGISTERED_TEXT );
+                    EventCallStack:SetText( "" );
+                else
+                    wipe( ET_FrameInfo );
+                    Event_Frame_FrameHeading:SetText( ET_CALLSTACK_TEXT );
+                    EventCallStack:SetText( call_stack );
+                end;
+                ET_ArgumentInfo = data;
+                ET_CurrentEvent = event;
+                EventTracker_Scroll_Arguments();
+                EventTracker_Scroll_Frames();
+                EventTracker_UpdateUI( time_usage );
 
-            -- Show the detail window if not already showing
-            if ( not EventDetailFrame:IsVisible() ) then
-                EventTracker_Toggle_Details();
+                -- Show the detail window if not already showing
+                if ( not EventDetailFrame:IsVisible() ) then
+                    EventTracker_Toggle_Details();
+                end;
             end;
         end;
     end;
