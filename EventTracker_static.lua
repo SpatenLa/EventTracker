@@ -2,9 +2,6 @@
     Description:
         Event detail info. Data available in English only.
         Data within this file has been collected from wowwiki.com
-
-    Revision:
-        $Id: EventTracker_static.lua 772 2013-02-05 15:32:54Z fmeus_lgs $
     ================================================================= --]]
 
 ET_Static = {
@@ -225,4 +222,10 @@ ET_Static = {
     ["VEHICLE_ANGLE_UPDATE"] = {"Pitch"},
     ["VOICE_START"] = {"Unit ID"},
     ["QUEST_AUTOCOMPLETE"] = {"Quest ID"},
+
+    ["GARRISON_MISSION_FINISHED"] = {"Mission ID"},
+    ["GARRISON_MISSION_BONUS_ROLL_COMPLETE"] = {"Mission ID","State"},
+    ["GARRISON_MISSION_BONUS_ROLL_LOOT"] = {"Item ID"},
+    ["GARRISON_MISSION_COMPLETE_RESPONSE"] = {"Mission ID","???","???"},
+    ["GARRISON_MISSION_STARTED"] = {"Mission ID"},
 };

@@ -1,9 +1,6 @@
 --[[ =================================================================
     Description:
         All strings (English) used by EventTracker.
-
-    Revision:
-        $Id: EventTracker_en.lua 772 2013-02-05 15:32:54Z fmeus_lgs $
     ================================================================= --]]
 
 -- Frame Strings

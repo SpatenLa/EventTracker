@@ -22,9 +22,6 @@
     Credits:
         A big 'Thank You' to all the people at Blizzard Entertainment
         for making World of Warcraft.
-
-    Revision:
-        $Id: EventTracker.lua 772 2013-02-05 15:32:54Z fmeus_lgs $
     ================================================================= --]]
 
 -- Local table functions
