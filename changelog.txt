@@ -1,3 +1,6 @@
+Version 2.7
+- Added: Removing event (by shift clicking) will also purge it from the data already collected
+
 Version 2.6
 - Added: Shift click on event will remove it from being tracked
 

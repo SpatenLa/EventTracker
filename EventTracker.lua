@@ -107,6 +107,30 @@
         end;
     end;
 
+-- Purge data for specific event
+    function EventTracker_PurgeEvent( purgeEvent )
+        -- Purge highlevel event info
+        ET_Events[purgeEvent].count = 0;
+
+        -- Purge event details
+        local length = #ET_EventDetail;
+
+        -- Redraw items
+        for index = length, 1, -1 do
+            local event, timestamp, data, realevent, time_usage, call_stack = unpack( ET_EventDetail[index] );
+            if ( event == purgeEvent ) then
+                tremove( ET_EventDetail, index );
+            end;
+        end;
+
+        -- Update UI elements
+        EventCallStack:SetText( "" );
+        EventTracker_Scroll_Details();
+        EventTracker_Scroll_Arguments();
+        EventTracker_Scroll_Frames();
+        EventTracker_UpdateUI();
+    end;
+
 -- Purge event data
     function EventTracker_Purge()
         -- Clear out old data
@@ -316,6 +340,7 @@
 
         if ( IsShiftKeyDown() ) then
             EventTracker:UnregisterEvent( event );
+            EventTracker_PurgeEvent( event );
             DEFAULT_CHAT_FRAME:AddMessage( "Event "..event.." has been removed" );
         else
             if ( button == "LeftButton" ) then
