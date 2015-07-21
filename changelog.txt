@@ -1,3 +1,9 @@
+Version 2.8
+- Changed: Updated for 6.2
+- Main window stays open when opening for instance the world map
+
+Note: Pressing the Escape-key no longer closes the Main window
+
 Version 2.7
 - Added: Removing event (by shift clicking) will also purge it from the data already collected
 

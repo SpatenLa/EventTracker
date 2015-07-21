@@ -1,6 +1,6 @@
-## Interface: 60000
+## Interface: 60200
 ## Title: EventTracker
-## Version: 2.7
+## Version: 2.8
 ## Author: fmeus
 ## Notes: Event Tracker allows you to view detailed information on events/functions tracked
 ## DefaultState: enabled
