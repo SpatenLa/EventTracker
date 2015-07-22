@@ -193,32 +193,29 @@
 
 -- Handle events sent to the addon
     function EventTracker_OnEvent( self, event, ... )
+        local logEvent = true;
+
         if ( event == "VARIABLES_LOADED" ) then
             EventTracker_Init();
         end;
 
         -- Store event data
         if ( ET_Data["active"] ) then
-            if ( not ET_FILTER ) then
-                -- Log the event
-                EventTracker_AddInfo( event, { ... }, true );
-            else
-                -- Only log the event when it matches the filter
+            if ET_FILTER then
+                -- Prevent event from being logged when it does not match the filter
+                if not event:find( ET_FILTER, 1, true ) then
+                    logEvent = false;
+                end;
+
+                -- But be sure to include it when it appears within ET_TRACKED_EVENTS
                 if tContains( ET_TRACKED_EVENTS, event ) then
-                    EventTracker_AddInfo( event, { ... }, true );
+                    logEvent = true;
                 end;
             end;
 
-            -- if ET_FILTER then
-            --     if tContains( ET_TRACKED_EVENTS, event ) then
-            --         return EventTracker_AddInfo( event, { ... }, true );
-            --     end;
-            --     if not event:find( ET_FILTER, 1, true ) then
-            --         return
-            --     end;
-            -- end
-
-            -- EventTracker_AddInfo( event, { ... }, true );
+            if ( logEvent ) then
+                EventTracker_AddInfo( event, { ... }, true );
+            end;
         end;
      end;
 
