@@ -36,4 +36,6 @@
                 "    /et registerall: Register all events to be tracked (# of events not known)",
                 "    /et unregisterall: Unregister all events to be tracked (except for VARIABLES_LOADED)",
                 "    /et resetpos: Reset position of the main EventTracker frame",
+                "    /et filter: Adds a filter to showed events (substring search, no regexp) - Requires registerall to be active",
+                "    /et removefilter: Remove filter",
               };

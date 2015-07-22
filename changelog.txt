@@ -1,6 +1,7 @@
 Version 2.8
 - Changed: Updated for 6.2
 - Main window stays open when opening for instance the world map
+- Added event filter when registerall is active (thanks to Alar for providing the code)
 
 Note: Pressing the Escape-key no longer closes the Main window
 

@@ -24,6 +24,9 @@
         for making World of Warcraft.
     ================================================================= --]]
 
+-- local variables
+    local ET_FILTER = nil;
+
 -- Local table functions
     local tinsert, wipe = table.insert, table.wipe;
     local lower, upper, substr = string.lower, string.upper, string.sub;
@@ -196,7 +199,26 @@
 
         -- Store event data
         if ( ET_Data["active"] ) then
-            EventTracker_AddInfo( event, { ... }, true );
+            if ( not ET_FILTER ) then
+                -- Log the event
+                EventTracker_AddInfo( event, { ... }, true );
+            else
+                -- Only log the event when it matches the filter
+                if tContains( ET_TRACKED_EVENTS, event ) then
+                    EventTracker_AddInfo( event, { ... }, true );
+                end;
+            end;
+
+            -- if ET_FILTER then
+            --     if tContains( ET_TRACKED_EVENTS, event ) then
+            --         return EventTracker_AddInfo( event, { ... }, true );
+            --     end;
+            --     if not event:find( ET_FILTER, 1, true ) then
+            --         return
+            --     end;
+            -- end
+
+            -- EventTracker_AddInfo( event, { ... }, true );
         end;
      end;
 
@@ -210,7 +232,7 @@
             argName = index;
         end;
 
-        argData = tostring(value or ET_NIL);
+        argData = tostring( value or ET_NIL );
 
         return C_BLUE..argName..C_CLOSE, C_YELLOW..argData..C_CLOSE;
     end;
@@ -407,6 +429,14 @@
             -- Track all events
             EventTracker:UnregisterAllEvents();
             EventTracker:RegisterEvent( "VARIABLES_LOADED" );
+
+        elseif ( command == "filter" ) then
+            -- Set filter to be applied to registerall events
+            ET_FILTER = event;
+
+        elseif ( command == "removefilter" ) then
+            -- Remove the filter
+            ET_FILTER = nil;
 
         elseif ( msg == "help" ) or ( msg == "?" ) then
             -- Show help info
