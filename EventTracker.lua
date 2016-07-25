@@ -12,10 +12,6 @@
         Update the file EventTracker_events.lua to specify which events
         need to be tracked.
 
-    Contact:
-        For questions, bug reports visit the website or send an email
-        to the following address: wowaddon@xs4all.nl
-
     Dependencies:
         None
 

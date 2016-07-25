@@ -1,3 +1,6 @@
+Version 2.9
+- Changed: Updated for 7.0.3
+
 Version 2.8
 - Changed: Updated for 6.2
 - Main window stays open when opening for instance the world map
