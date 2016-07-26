@@ -773,9 +773,6 @@
         </Frames>
         <Scripts>
             <OnLoad>
-<!--
-                tinsert( UISpecialFrames, self:GetName() );
--->
             </OnLoad>
             <OnShow>
                 EventTracker_Scroll_Details();
