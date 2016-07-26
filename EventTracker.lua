@@ -356,7 +356,7 @@
         if ( IsShiftKeyDown() ) then
             EventTracker:UnregisterEvent( event );
             EventTracker_PurgeEvent( event );
-            DEFAULT_CHAT_FRAME:AddMessage( "Event "..event.." has been removed" );
+            DEFAULT_CHAT_FRAME:AddMessage( ET_REMOVED:format(event) );
         else
             if ( button == "LeftButton" ) then
                 if ( realevent ) then
