@@ -17,7 +17,7 @@
     ET_REGISTERED_TEXT = "Registered by";
     ET_CALLSTACK_TEXT = "Call Stack";
     ET_UNNAMED_FRAME = "< "..C_RED.."Unnamed frame"..C_CLOSE.." >";
-
+    ET_REMOVED = "Event "..C_YELLOW.."%s"..C_CLOSE.." has been removed"
     ET_SHOW_DETAILS = "Show details >>";
     ET_HIDE_DETAILS = "Hide details <<";
     ET_TIME_CURRENT = "Time (current) : "..C_BLUE.."%.2f ms"..C_CLOSE;
