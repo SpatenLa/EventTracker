@@ -70,6 +70,14 @@
         end;
     end;
 
+-- Remove the events listed to be ignored
+    function EventTracker_RemoveIgnoredEvents()
+        -- Track other events
+        for key, value in pairs( ET_IGNORED_EVENTS ) do
+            EventTracker:UnregisterEvent( strtrim( upper( value ) ) );
+        end;
+    end;
+
 -- Handle startup of the addon
     function EventTracker_OnLoad( self )
         -- Show startup message
@@ -417,6 +425,7 @@
         elseif ( command == "registerall" ) then
             -- Track all events
             EventTracker:RegisterAllEvents();
+            EventTracker_RemoveIgnoredEvents();
 
         elseif ( command == "unregisterall" ) then
             -- Track all events

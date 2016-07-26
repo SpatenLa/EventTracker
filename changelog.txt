@@ -1,5 +1,6 @@
 Version 2.9
 - Changed: Updated for 7.0.3
+- Added: Events listed in ET_IGNORED_EVENTS will not be tracked when using /et registerall
 
 Version 2.8
 - Changed: Updated for 6.2
