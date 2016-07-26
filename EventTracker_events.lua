@@ -9,7 +9,7 @@
         "PLAYERREAGENTBANKSLOTS_CHANGED",
     };
 
--- Events to be ignored (applied when using /registerall)
+-- Events to be ignored (applied when using /et registerall)
     ET_IGNORED_EVENTS = {
         "BAG_UPDATE_COOLDOWN",
         "ACTIONBAR_UPDATE_COOLDOWN",
