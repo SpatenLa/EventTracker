@@ -31,7 +31,14 @@
     function pack(...)
         return arg;
     end
-
+	
+-- Stolen from Rivers
+	function EventTracker_tconcat(t1, t2)
+	  for _, v in ipairs(t2) do
+		table.insert(t1, v)
+	  end
+	end
+	
 -- Send message to the default chat frame
     function EventTracker_Message( msg, prefix )
         -- Initialize
@@ -78,6 +85,104 @@
         end;
     end;
 
+-- hardcoding all the wonderful CLEU event arguments
+	function EventTracker_GenerateCombatlogArray()
+		-- this arguments are the same for all CLEU events
+		ET_Static['COMBAT_LOG_EVENT_UNFILTERED'] = {"timestamp", "subEvent", "hideCaster", "sourceGUID", "sourceName", "sourceFlags", "sourceRaidFlags", "destGUID", "destName", "destFlags", "destRaidFlags"}
+	
+		-- known SubEvent prefixes and arguments they add
+		local Prefix = {
+		["SWING"] = {},
+		["RANGE"] = {"spellId", "spellName", "spellSchool"},
+		["SPELL"] = {"spellId", "spellName", "spellSchool"},
+		["SPELL_PERIODIC"] = {"spellId", "spellName", "spellSchool"},
+		["SPELL_BUILDIUNG"] = {"spellId", "spellName", "spellSchool"},
+		["ENVIROMENTAL"] = {"enviromentalType"}
+		}
+		-- known SubEvent suffixes and arguments they add
+		local Suffix = {
+		["_DAMAGE"] = {"amount", "overkill", "school", "resisted", "blocked", "absorbed", "critical", "glancing", "crushing", "isOffHand"},
+		["_MISSED"] = {"missType", "isOffHand", "amountMissed"},
+		["_HEAL"] = {"amount", "overhealing", "absorbed", "critical"},
+		["_ENERGIZE"] = {"amount", "overEnergize", "powerType", "alternatePowerType"},
+		["_DRAIN"] = {"amount", "powerType", "extraAmount"},
+		["_LEECH"] = {"amount", "powerType", "extraAmount"},
+		["_INTERRUPT"] = {"extraSpellId", "extraSpellName", "extraSchool"},
+		["_DISPEL"] = {"extraSpellId", "extraSpellName", "extraSchool", "auraType"},
+		["_DISPEL_FAILED"] = {"extraSpellId", "extraSpellName", "extraSchool"},
+		["_STOLEN"] = {"extraSpellId", "extraSpellName", "extraSchool", "auraType"},
+		["_EXTRA_ATTACKS"] = {"amount"},
+		["_AURA_APPLIED"] = {"auraType", "amount"},
+		["_AURA_REMOVED"] = {"auraType", "amount"},
+		["_AURA_APPLIED_DOSE"] = {"auraType", "amount"},
+		["_AURA_REMOVED_DOSE"] = {"auraType", "amount"},
+		["_AURA_REFRESH"] = {"auraType", "amount"},
+		["_AURA_BROKEN"] = {"auraType"},
+		["_AURA_BROKEN_SPELL"] = {"extraSpellId", "extraSpellName", "extraSchool", "auraType"},
+		["_CAST_START"] = {},
+		["_CAST_SUCCESS"] = {},
+		["_CAST_FAILED"] = {"failedType"},
+		["_INSTAKILL"] = {},
+		["_DURABILITY_DAMAGE"] = {},
+		["_DURABILITY_DAMAGE_ALL"] = {},
+		["_CREATE"] = {},
+		["_SUMMON"] = {},
+		["_RESURRECT"] = {}
+		}
+		
+		local Parameters = {}
+		-- now use the Hardcoded Arrays to fill up the Event Array with the CLEU event arguments
+		for pre,params1 in pairs(Prefix) do
+			for suf, params2 in pairs(Suffix) do
+				Parameters = CopyTable(params1)
+				EventTracker_tconcat(Parameters, CopyTable(params2))
+				ET_Static["COMBAT_LOG_EVENT_UNFILTERED_" .. pre .. suf] = CopyTable(ET_Static["COMBAT_LOG_EVENT_UNFILTERED"])
+				EventTracker_tconcat(ET_Static["COMBAT_LOG_EVENT_UNFILTERED_" .. pre .. suf], CopyTable(Parameters))
+			end
+		end
+		
+		--non base SubEvents
+		ET_Static["COMBAT_LOG_EVENT_UNFILTERED_DAMAGE_SHIELD"] = ET_Static["COMBAT_LOG_EVENT_UNFILTERED_SPELL_DAMAGE"]
+		ET_Static["COMBAT_LOG_EVENT_UNFILTERED_DAMAGE_SPLIT"] = ET_Static["COMBAT_LOG_EVENT_UNFILTERED_SPELL_DAMAGE"]
+		ET_Static["COMBAT_LOG_EVENT_UNFILTERED_DAMAGE_MISSED"] = ET_Static["COMBAT_LOG_EVENT_UNFILTERED_SPELL_MISSED"]
+		ET_Static["COMBAT_LOG_EVENT_UNFILTERED_PARTY_KILL"] = ET_Static["COMBAT_LOG_EVENT_UNFILTERED"]
+		
+		ET_Static["COMBAT_LOG_EVENT_UNFILTERED_ENCHANT_APPLIED"] = CopyTable(ET_Static["COMBAT_LOG_EVENT_UNFILTERED"])
+		EventTracker_tconcat(ET_Static["COMBAT_LOG_EVENT_UNFILTERED_ENCHANT_APPLIED"], {"spellName", "itemID", "itemName"})
+		
+		ET_Static["COMBAT_LOG_EVENT_UNFILTERED_ENCHANT_REMOVED"] = CopyTable(ET_Static["COMBAT_LOG_EVENT_UNFILTERED"])
+		EventTracker_tconcat(ET_Static["COMBAT_LOG_EVENT_UNFILTERED_ENCHANT_REMOVED"], {"spellName", "itemID", "itemName"})
+		
+		ET_Static["COMBAT_LOG_EVENT_UNFILTERED_UNIT_DIED"] = CopyTable(ET_Static["COMBAT_LOG_EVENT_UNFILTERED"])
+		EventTracker_tconcat(ET_Static["COMBAT_LOG_EVENT_UNFILTERED_UNIT_DIED"], {"recapID", "unconsciousOnDeath"})
+		
+		ET_Static["COMBAT_LOG_EVENT_UNFILTERED_UNIT_DESTROYED"] = CopyTable(ET_Static["COMBAT_LOG_EVENT_UNFILTERED"])
+		EventTracker_tconcat(ET_Static["COMBAT_LOG_EVENT_UNFILTERED_UNIT_DESTROYED"], {"recapID", "unconsciousOnDeath"})
+		
+		ET_Static["COMBAT_LOG_EVENT_UNFILTERED_UNIT_DISSIPATES"] = CopyTable(ET_Static["COMBAT_LOG_EVENT_UNFILTERED"])
+		EventTracker_tconcat(ET_Static["COMBAT_LOG_EVENT_UNFILTERED_UNIT_DISSIPATES"], {"recapID", "unconsciousOnDeath"})
+		
+		-- Fallback
+		EventTracker_tconcat(ET_Static["COMBAT_LOG_EVENT_UNFILTERED"], {"Arg 11","Arg 12","Arg 13","Arg 14","Arg 15","Arg 16","Arg 17","Arg 18","Arg 19","Arg 20","Arg 21","Arg 22","Arg 23","Arg 24"})
+	end
+	
+-- Fill the event Array with the argument names
+	function EventTracker_GenerateEventArray()
+		-- all the Information needed is in the Blizzard APIDocumentation
+		LoadAddOn("Blizzard_APIDocumentation")
+		
+		for i,v in ipairs(APIDocumentation['events']) do
+			ET_Static[v['LiteralName']] = {}
+			if (v['Payload']) then
+				for j,k in ipairs(v['Payload']) do
+					ET_Static[v['LiteralName']][j] = k['Name']
+				end
+			end
+		end
+		-- CLEU isn't Documented in the APIDocumentation need to hardcode it
+		EventTracker_GenerateCombatlogArray()
+	end
+	
 -- Handle startup of the addon
     function EventTracker_OnLoad( self )
         -- Show startup message
@@ -85,6 +190,9 @@
 
         -- Register events to be monitored
         EventTracker_RegisterEvents( self );
+		
+		-- Fill up the Array with the argument names
+		EventTracker_GenerateEventArray()
     end;
 
 -- Show or hide the Main dialog
@@ -161,6 +269,7 @@
         if (not ET_Events[event] ) then
             ET_Events[event] = {};
         end;
+		
         ET_Events[event].count = ( ET_Events[event].count or 0 ) + 1;
         if ( time_usage ) then
             ET_Events[event].time = ( ET_Events[event].time or 0 ) + time_usage;
@@ -198,7 +307,8 @@
 -- Handle events sent to the addon
     function EventTracker_OnEvent( self, event, ... )
         local logEvent = true;
-
+		local args = {}
+		
         if ( event == "VARIABLES_LOADED" ) then
             EventTracker_Init();
         end;
@@ -218,7 +328,16 @@
             end;
 
             if ( logEvent ) then
-                EventTracker_AddInfo( event, { ... }, true );
+				-- in case of a CLEU event get the event arguments from the API and add the subEvent to the event name for changing arguments
+				if (event == "COMBAT_LOG_EVENT_UNFILTERED") then
+					args = {CombatLogGetCurrentEventInfo()}
+					if (ET_Static[event .. args[2]]) then
+						event = event .. args[2]
+					end
+				elseif (...) then
+					args = {...}
+				end
+				EventTracker_AddInfo( event, args , true );
             end;
         end;
      end;
@@ -259,7 +378,7 @@
                 _G["EventItem"..line.."InfoEvent"]:SetText( event );
                 _G["EventItem"..line.."InfoTimestamp"]:SetText( date( "%Y-%m-%d %H:%M:%S", timestamp ) );
                 argInfo = "";
-
+				
                 for key, value in pairs( data ) do
                     argName, argData = EventTracker_GetStrings( event, key, value );
                     argInfo = argInfo..", "..argName.." = "..argData;
@@ -279,7 +398,6 @@
         local line, index, button, argName, argData;
         local offset = FauxScrollFrame_GetOffset( EventTracker_Arguments );
 
-        -- Update scrollbars
         FauxScrollFrame_Update( EventTracker_Arguments, length+1, ET_ARGUMENTS, 16 );
 
         -- Redraw items
