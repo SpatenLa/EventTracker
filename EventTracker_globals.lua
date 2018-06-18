@@ -19,6 +19,7 @@
     ET_UNKNOWN = "***";
 
 -- Data arrays
+	ET_Static = {}
     ET_Events = {};
     ET_EventDetail = {};
     ET_FrameInfo = {};
