@@ -8,7 +8,6 @@
 
 EventTracker_globals.lua
 EventTracker_events.lua
-EventTracker_static.lua
 EventTracker_en.lua
 EventTracker.lua
 EventTracker.xml
