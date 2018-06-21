@@ -4,7 +4,7 @@
 ## Author: fmeus
 ## Notes: Event Tracker allows you to view detailed information on events/functions tracked
 ## DefaultState: enabled
-## SavedVariables: ET_Data
+## SavedVariables: ET_Saved
 
 EventTracker_globals.lua
 EventTracker_events.lua
