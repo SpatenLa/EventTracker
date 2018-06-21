@@ -186,13 +186,15 @@
 		-- CLEU isn't Documented in the APIDocumentation need to hardcode it
 		EventTracker_GenerateCombatlogArray()
 		-- ET_Saved[Eventname] = {Parametername, functionname, wantedReturnValue, parameterFromParameter}
-		--ET_Saved["UNIT_SPELLCAST_START"] = {[1] = {"Spellname", "GetSpellInfo", 1, 3}}
+		-- ET_Saved["UNIT_SPELLCAST_START"] = {[1] = {"Spellname", "GetSpellInfo", 1, 3}}
 		
 		local extraArgs = {}
 		for i,v in pairs(ET_Saved) do
 			extraArgs = {}
-			for j,k in ipairs(v) do
-				extraArgs[j] = "FAKE"..k[1]
+			if (v) then
+				for j,k in ipairs(v) do
+					extraArgs[j] = "FAKE"..k[1]
+				end
 			end
 			EventTracker_tconcat(ET_Static[i], CopyTable(extraArgs))
 		end
@@ -200,7 +202,7 @@
 	
 -- Handle startup of the addon
     function EventTracker_OnLoad( self )
-
+		ET_Saved = ET_Saved or {}
         -- Show startup message
         EventTracker_Message( ET_STARTUP_MESSAGE, false );
 
