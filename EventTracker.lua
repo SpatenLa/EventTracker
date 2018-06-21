@@ -21,7 +21,8 @@
     ================================================================= --]]
 
 -- local variables
-    local ET_FILTER = nil;
+	local ET_FILTER = nil;
+	
 
 -- Local table functions
     local tinsert, wipe = table.insert, table.wipe;
@@ -64,6 +65,9 @@
         SlashCmdList["EVENTTRACKER"] = EventTracker_SlashHandler;
         SLASH_EVENTTRACKER1 = "/et";
         SLASH_EVENTTRACKER2 = "/eventtracker";
+		
+		-- Fill up the Array with the argument names
+		EventTracker_GenerateEventArray()
     end;
 
 -- Register events
@@ -181,18 +185,27 @@
 		end
 		-- CLEU isn't Documented in the APIDocumentation need to hardcode it
 		EventTracker_GenerateCombatlogArray()
+		-- ET_Saved[Eventname] = {Parametername, functionname, wantedReturnValue, parameterFromParameter}
+		--ET_Saved["UNIT_SPELLCAST_START"] = {[1] = {"Spellname", "GetSpellInfo", 1, 3}}
+		
+		local extraArgs = {}
+		for i,v in pairs(ET_Saved) do
+			extraArgs = {}
+			for j,k in ipairs(v) do
+				extraArgs[j] = "FAKE"..k[1]
+			end
+			EventTracker_tconcat(ET_Static[i], CopyTable(extraArgs))
+		end
 	end
 	
 -- Handle startup of the addon
     function EventTracker_OnLoad( self )
+
         -- Show startup message
         EventTracker_Message( ET_STARTUP_MESSAGE, false );
 
         -- Register events to be monitored
         EventTracker_RegisterEvents( self );
-		
-		-- Fill up the Array with the argument names
-		EventTracker_GenerateEventArray()
     end;
 
 -- Show or hide the Main dialog
@@ -309,7 +322,7 @@
         local logEvent = true;
 		local args = {}
 		
-        if ( event == "VARIABLES_LOADED" ) then
+        if ( event == "VARIABLES_LOADED") then
             EventTracker_Init();
         end;
 
@@ -331,17 +344,21 @@
 				-- in case of a CLEU event get the event arguments from the API and add the subEvent to the event name for changing arguments
 				if (event == "COMBAT_LOG_EVENT_UNFILTERED") then
 					args = {CombatLogGetCurrentEventInfo()}
-					if (ET_Static[event .. args[2]]) then
-						event = event .. args[2]
+					if (ET_Static[event .. "_" .. args[2]]) then
+						event = event .. "_" .. args[2]
 					end
 				elseif (...) then
 					args = {...}
+				end
+				if (ET_Saved[event]) then
+					for i,v in ipairs(ET_Saved[event]) do
+						tinsert(args, (select(v[3], assert(loadstring('return '..v[2]..'(...)'))(args[v[4]]))))
+					end
 				end
 				EventTracker_AddInfo( event, args , true );
             end;
         end;
      end;
-
 -- Build strings for argument names and data (incl proper colors and nil handling)
     function EventTracker_GetStrings( event, index, value )
         local argName, argData;
