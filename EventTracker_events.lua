@@ -9,12 +9,12 @@
         "PLAYERREAGENTBANKSLOTS_CHANGED",
     };
 
--- Events to be ignored (applied when using /et registerall)
+-- Events to be ignored (applied when using /registerall)
     ET_IGNORED_EVENTS = {
-        "BAG_UPDATE_COOLDOWN",
-        "ACTIONBAR_UPDATE_COOLDOWN",
-        "SPELL_UPDATE_COOLDOWN",
-        "CURSOR_UPDATE",
-        "CRITERIA_UPDATE",
-        "UPDATE_MOUSEOVER_UNIT",
+        ["BAG_UPDATE_COOLDOWN"] = true,
+        ["ACTIONBAR_UPDATE_COOLDOWN"] = true,
+        ["SPELL_UPDATE_COOLDOWN"] = true,
+        ["CURSOR_UPDATE"] = true,
+        ["CRITERIA_UPDATE"] = true,
+        ["UPDATE_MOUSEOVER_UNIT"] = true,
     };
