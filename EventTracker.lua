@@ -321,45 +321,47 @@
 
 -- Handle events sent to the addon
     function EventTracker_OnEvent( self, event, ... )
-        local logEvent = true;
-		local args = {}
-		
-        if ( event == "VARIABLES_LOADED") then
-            EventTracker_Init();
-        end;
+		if (not ET_IGNORED_EVENTS[event]) then -- RegisterAllEvents change bfa
+			local logEvent = true;
+			local args = {}
+			
+			if ( event == "VARIABLES_LOADED") then
+				EventTracker_Init();
+			end;
 
-        -- Store event data
-        if ( ET_Data["active"] ) then
-            if ET_FILTER then
-                -- Prevent event from being logged when it does not match the filter
-                if not event:find( ET_FILTER, 1, true ) then
-                    logEvent = false;
-                end;
+			-- Store event data
+			if ( ET_Data["active"] ) then
+				if ET_FILTER then
+					-- Prevent event from being logged when it does not match the filter
+					if not event:find( ET_FILTER, 1, true ) then
+						logEvent = false;
+					end;
 
-                -- But be sure to include it when it appears within ET_TRACKED_EVENTS
-                if tContains( ET_TRACKED_EVENTS, event ) then
-                    logEvent = true;
-                end;
-            end;
+					-- But be sure to include it when it appears within ET_TRACKED_EVENTS
+					if tContains( ET_TRACKED_EVENTS, event ) then
+						logEvent = true;
+					end;
+				end;
 
-            if ( logEvent ) then
-				-- in case of a CLEU event get the event arguments from the API and add the subEvent to the event name for changing arguments
-				if (event == "COMBAT_LOG_EVENT_UNFILTERED") then
-					args = {CombatLogGetCurrentEventInfo()}
-					if (ET_Static[event .. "_" .. args[2]]) then
-						event = event .. "_" .. args[2]
+				if ( logEvent ) then
+					-- in case of a CLEU event get the event arguments from the API and add the subEvent to the event name for changing arguments
+					if (event == "COMBAT_LOG_EVENT_UNFILTERED") then
+						args = {CombatLogGetCurrentEventInfo()}
+						if (ET_Static[event .. "_" .. args[2]]) then
+							event = event .. "_" .. args[2]
+						end
+					elseif (...) then
+						args = {...}
 					end
-				elseif (...) then
-					args = {...}
-				end
-				if (ET_Saved[event]) then
-					for i,v in ipairs(ET_Saved[event]) do
-						tinsert(args, (select(v[3], assert(loadstring('return '..v[2]..'(...)'))(args[v[4]]))))
+					if (ET_Saved[event]) then
+						for i,v in ipairs(ET_Saved[event]) do
+							tinsert(args, (select(v[3], assert(loadstring('return '..v[2]..'(...)'))(args[v[4]]))))
+						end
 					end
-				end
-				EventTracker_AddInfo( event, args , true );
-            end;
-        end;
+					EventTracker_AddInfo( event, args , true );
+				end;
+			end;
+		end
      end;
 -- Build strings for argument names and data (incl proper colors and nil handling)
     function EventTracker_GetStrings( event, index, value )
@@ -499,8 +501,12 @@
         local event, timestamp, data, realevent, time_usage, call_stack = unpack( ET_EventDetail[ FauxScrollFrame_GetOffset( EventTracker_Details ) + self:GetID() ] );
 
         if ( IsShiftKeyDown() ) then
-            EventTracker:UnregisterEvent( event );
             EventTracker_PurgeEvent( event );
+			if (string.find(event, "COMBAT_LOG_EVENT_UNFILTERED")) then
+				event = "COMBAT_LOG_EVENT_UNFILTERED"
+			end
+			ET_IGNORED_EVENTS[event] = true; -- RegisterAllEvents change bfa
+            EventTracker:UnregisterEvent( event );
             DEFAULT_CHAT_FRAME:AddMessage( ET_REMOVED:format(event) );
         else
             if ( button == "LeftButton" ) then
@@ -554,15 +560,18 @@
         elseif ( command == "add" ) then
             -- Add event to be tracked
             EventTracker:RegisterEvent( event );
+			ET_IGNORED_EVENTS[event] = false; -- RegisterAllEvents change bfa
 
         elseif ( command == "remove" ) then
             -- Remove event to be tracked
             EventTracker:UnregisterEvent( event );
+			ET_IGNORED_EVENTS[event] = true; -- RegisterAllEvents change bfa
 
         elseif ( command == "registerall" ) then
             -- Track all events
             EventTracker:RegisterAllEvents();
-            EventTracker_RemoveIgnoredEvents();
+			ET_IGNORED_EVENTS = {}; -- RegisterAllEvents change bfa
+            -- EventTracker_RemoveIgnoredEvents(); doenst work in bfa
 
         elseif ( command == "unregisterall" ) then
             -- Track all events
