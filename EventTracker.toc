@@ -1,4 +1,4 @@
-## Interface: 70000
+## Interface: 80100
 ## Title: EventTracker
 ## Version: 3.0
 ## Author: fmeus
