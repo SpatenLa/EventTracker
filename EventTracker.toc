@@ -1,6 +1,6 @@
 ## Interface: 80100
 ## Title: EventTracker
-## Version: 3.0
+## Version: 3.1
 ## Author: fmeus
 ## Notes: Event Tracker allows you to view detailed information on events/functions tracked
 ## DefaultState: enabled
