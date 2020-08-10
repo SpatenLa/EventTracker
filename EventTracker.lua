@@ -27,11 +27,6 @@
 -- Local table functions
     local tinsert, wipe = table.insert, table.wipe;
     local lower, upper, substr = string.lower, string.upper, string.sub;
-
--- Function to create array of return values
-    function pack(...)
-        return arg;
-    end
 	
 -- Stolen from Rivers
 	function EventTracker_tconcat(t1, t2)
@@ -212,12 +207,12 @@
 
 -- Show or hide the Main dialog
     function EventTracker_Toggle_Main()
-        if(  EventTrackerFrame:IsVisible() ) then
-            EventTrackerFrame:Hide();
+        if(  EventTracker.OptionsFrame:IsVisible() ) then
+            EventTracker.OptionsFrame:Hide();
         else
             -- Show the frame
-            EventTrackerFrame:Show();
-            EventTrackerFrame:SetBackdropColor( 0, 0, 0, .5 );
+            EventTracker.OptionsFrame:Show();
+            --EventTracker.OptionsFrame:SetBackdropColor( 0, 0, 0, .5 );
 
             -- Update the UI
             EventTracker_UpdateUI();
@@ -226,14 +221,13 @@
 
 -- Show or hide the event detail dialog
     function EventTracker_Toggle_Details()
-        if( EventDetailFrame:IsVisible() ) then
-            EventDetailFrame:Hide();
-            ExpandCollapseButton:SetText( ET_SHOW_DETAILS );
+        if( EventTracker.OptionsFrame.EventDetail:IsVisible() ) then
+            EventTracker.OptionsFrame.EventDetail:Hide();
+            EventTracker.OptionsFrame.ExpandCollapseButton:SetText( ET_SHOW_DETAILS );
         else
             -- Show the frame
-            EventDetailFrame:Show();
-            EventDetailFrame:SetBackdropColor( 0, 0, 0, .5 );
-            ExpandCollapseButton:SetText( ET_HIDE_DETAILS );
+            EventTracker.OptionsFrame.EventDetail:Show();
+            EventTracker.OptionsFrame.ExpandCollapseButton:SetText( ET_HIDE_DETAILS );
         end;
     end;
 
@@ -254,7 +248,7 @@
         end;
 
         -- Update UI elements
-        EventCallStack:SetText( "" );
+        --EventCallStack:SetText( "" );
         EventTracker_Scroll_Details();
         EventTracker_Scroll_Arguments();
         EventTracker_Scroll_Frames();
@@ -271,7 +265,7 @@
         ET_CurrentEvent = nil;
 
         -- Update UI elements
-        EventCallStack:SetText( "" );
+        --EventCallStack:SetText( "" );
         EventTracker_Scroll_Details();
         EventTracker_Scroll_Arguments();
         EventTracker_Scroll_Frames();
@@ -292,7 +286,7 @@
         tinsert( ET_EventDetail, { event, time(), data, realevent, time_usage, call_stack } );
 
         -- Update frame
-        if(  EventTrackerFrame:IsVisible() ) then
+        if(  EventTracker.OptionsFrame:IsVisible() ) then
             EventTracker_Scroll_Details();
             EventTracker_UpdateUI();
         end;
@@ -382,29 +376,29 @@
     function EventTracker_Scroll_Details()
         local length = #ET_EventDetail;
         local line, index, button, argInfo, argName, argData;
-        local offset = FauxScrollFrame_GetOffset( EventTracker_Details );
+        local offset = FauxScrollFrame_GetOffset( EventTracker.OptionsFrame.EventScroll );
         local argName, argData;
 
         -- Update scrollbars
-        FauxScrollFrame_Update( EventTracker_Details, length+1, ET_DETAILS, 30 );
+        FauxScrollFrame_Update( EventTracker.OptionsFrame.EventScroll, length+1, ET_DETAILS, 30 );
 
         -- Redraw items
         for line = 1, ET_DETAILS, 1 do
             index = offset + line;
-            button = _G["EventItem"..line];
+            button = EventTracker.OptionsFrame.EventItem[line];
             button:SetID( line );
             button:SetAttribute( "index", index );
             if index <= length then
                 local event, timestamp, data, realevent, time_usage, call_stack = unpack( ET_EventDetail[index] );
-                _G["EventItem"..line.."InfoEvent"]:SetText( event );
-                _G["EventItem"..line.."InfoTimestamp"]:SetText( date( "%Y-%m-%d %H:%M:%S", timestamp ) );
+                button.InfoEvent:SetText( event );
+                button.InfoTimestamp:SetText( date( "%Y-%m-%d %H:%M:%S", timestamp ) );
                 argInfo = "";
 				
                 for key, value in pairs( data ) do
                     argName, argData = EventTracker_GetStrings( event, key, value );
                     argInfo = argInfo..", "..argName.." = "..argData;
                 end;
-                _G["EventItem"..line.."InfoData"]:SetText( substr( argInfo, 3 ) );
+                button.InfoData:SetText( substr( argInfo, 3 ) );
                 button:Show();
                 button:Enable();
             else
@@ -417,20 +411,20 @@
     function EventTracker_Scroll_Arguments()
         local length = #ET_ArgumentInfo;
         local line, index, button, argName, argData;
-        local offset = FauxScrollFrame_GetOffset( EventTracker_Arguments );
+        local offset = FauxScrollFrame_GetOffset( EventTracker.OptionsFrame.EventDetail.ArgumentScroll );
 
-        FauxScrollFrame_Update( EventTracker_Arguments, length+1, ET_ARGUMENTS, 16 );
+        FauxScrollFrame_Update( EventTracker.OptionsFrame.EventDetail.ArgumentScroll, length+1, ET_ARGUMENTS, 16 );
 
         -- Redraw items
         for line = 1, ET_ARGUMENTS, 1 do
             index = offset + line;
-            button = _G["EventArgument"..line];
+            button = EventTracker.OptionsFrame.EventDetail.EventArgument[line];
             button:SetID( line );
             button:SetAttribute( "index", index );
             if index <= length then
                 argName, argData = EventTracker_GetStrings( ET_CurrentEvent, index, ET_ArgumentInfo[index] );
-                _G["EventArgument"..line.."InfoArgument"]:SetText( argName );
-                _G["EventArgument"..line.."InfoData"]:SetText( argData );
+                button.InfoArgument:SetText( argName );
+                button.InfoData:SetText( argData );
                 button:Show();
                 button:Enable();
             else
@@ -443,19 +437,19 @@
     function EventTracker_Scroll_Frames()
         local length = #ET_FrameInfo;
         local line, index, button;
-        local offset = FauxScrollFrame_GetOffset( EventTracker_Frames );
+        local offset = FauxScrollFrame_GetOffset( EventTracker.OptionsFrame.EventDetail.EventScroll );
 
         -- Update scrollbars
-        FauxScrollFrame_Update( EventTracker_Frames, length+1, ET_FRAMES, 16 );
+        FauxScrollFrame_Update( EventTracker.OptionsFrame.EventDetail.EventScroll, length+1, ET_FRAMES, 16 );
 
         -- Redraw items
         for line = 1, ET_FRAMES, 1 do
             index = offset + line;
-            button = _G["EventFrame"..line];
+            button = EventTracker.OptionsFrame.EventDetail.EventFrame[line];
             button:SetID( line );
             button:SetAttribute( "index", index );
             if index <= length then
-                _G["EventFrame"..line.."InfoFrame"]:SetText( ( ET_FrameInfo[index]:GetName() or ET_UNNAMED_FRAME ) );
+                button.InfoFrame:SetText( ( ET_FrameInfo[index]:GetName() or ET_UNNAMED_FRAME ) );
                 button:Show();
                 button:Enable();
             else
@@ -467,26 +461,26 @@
 -- Update the UI
     function EventTracker_UpdateUI( currenttime )
         -- Number of events caught
-        _G["EventCount"]:SetText( ET_EVENT_COUNT:format( #ET_EventDetail ) );
+        EventTracker.OptionsFrame.EventCount:SetText( ET_EVENT_COUNT:format( #ET_EventDetail ) );
 
         -- Number of events that are being tracked
-        _G["EventsTracked"]:SetText( ET_EVENTS_TRACKED:format( #ET_TRACKED_EVENTS ) );
+        EventTracker.OptionsFrame.EventsTracked:SetText( ET_EVENTS_TRACKED:format( #ET_TRACKED_EVENTS ) );
 
         -- Memory usage
-        _G["EventMemory"]:SetText( ET_MEMORY:format( GetAddOnMemoryUsage( "EventTracker" ) ) );
+        EventTracker.OptionsFrame.EventMemory:SetText( ET_MEMORY:format( GetAddOnMemoryUsage( "EventTracker" ) ) );
 
         -- Update tracking state
-        _G["TrackingState"]:SetText( ET_TRACKING:format( lower( gsub( gsub( tostring( ET_Data["active"] ), "true", ET_STATE_ON ), "false", ET_STATE_OFF ) ) ) );
+        EventTracker.OptionsFrame.TrackingState:SetText( ET_TRACKING:format( lower( gsub( gsub( tostring( ET_Data["active"] ), "true", ET_STATE_ON ), "false", ET_STATE_OFF ) ) ) );
 
         -- Update current event for details
         if ( ET_CurrentEvent ) then
-            _G["CurrentEventName"]:SetText( ET_CurrentEvent.." ["..ET_Events[ET_CurrentEvent].count.."]" );
-            _G["EventTimeCurrent"]:SetText( ET_TIME_CURRENT:format( currenttime or 0 ) );
-            _G["EventTimeTotal"]:SetText( ET_TIME_TOTAL:format( ET_Events[ET_CurrentEvent].time or 0 ) );
+            EventTracker.OptionsFrame.EventDetail.CurrentEventName:SetText( ET_CurrentEvent.." ["..ET_Events[ET_CurrentEvent].count.."]" );
+            EventTracker.OptionsFrame.EventDetail.EventTimeCurrent:SetText( ET_TIME_CURRENT:format( currenttime or 0 ) );
+            EventTracker.OptionsFrame.EventDetail.EventTimeTotal:SetText( ET_TIME_TOTAL:format( ET_Events[ET_CurrentEvent].time or 0 ) );
         else
-            _G["CurrentEventName"]:SetText( ET_UNKNOWN );
-            _G["EventTimeCurrent"]:SetText( ET_TIME_CURRENT:format( 0 ) );
-            _G["EventTimeTotal"]:SetText( ET_TIME_TOTAL:format( 0 ) );
+            EventTracker.OptionsFrame.EventDetail.CurrentEventName:SetText( ET_UNKNOWN );
+            EventTracker.OptionsFrame.EventDetail.EventTimeCurrent:SetText( ET_TIME_CURRENT:format( 0 ) );
+            EventTracker.OptionsFrame.EventDetail.EventTimeTotal:SetText( ET_TIME_TOTAL:format( 0 ) );
         end;
     end;
 
@@ -498,7 +492,7 @@
 
 -- Handle click on event item
     function EventTracker_EventOnClick( self, button, down )
-        local event, timestamp, data, realevent, time_usage, call_stack = unpack( ET_EventDetail[ FauxScrollFrame_GetOffset( EventTracker_Details ) + self:GetID() ] );
+        local event, timestamp, data, realevent, time_usage, call_stack = unpack( ET_EventDetail[ FauxScrollFrame_GetOffset( EventTracker.OptionsFrame.EventScroll ) + self:GetID() ] );
 
         if ( IsShiftKeyDown() ) then
             EventTracker_PurgeEvent( event );
@@ -512,12 +506,12 @@
             if ( button == "LeftButton" ) then
                 if ( realevent ) then
                     ET_FrameInfo = { GetFramesRegisteredForEvent( event ) };
-                    Event_Frame_FrameHeading:SetText( ET_REGISTERED_TEXT );
-                    EventCallStack:SetText( "" );
+                    EventTracker.OptionsFrame.EventDetail.FrameHeading:SetText( ET_REGISTERED_TEXT );
+                    --EventCallStack:SetText( "" );
                 else
                     wipe( ET_FrameInfo );
-                    Event_Frame_FrameHeading:SetText( ET_CALLSTACK_TEXT );
-                    EventCallStack:SetText( call_stack );
+                    EventTracker.OptionsFrame.EventDetail.FrameHeading:SetText( ET_CALLSTACK_TEXT );
+                    --EventCallStack:SetText( call_stack );
                 end;
                 ET_ArgumentInfo = data;
                 ET_CurrentEvent = event;
@@ -526,7 +520,7 @@
                 EventTracker_UpdateUI( time_usage );
 
                 -- Show the detail window if not already showing
-                if ( not EventDetailFrame:IsVisible() ) then
+                if ( not EventTracker.OptionsFrame.EventDetail:IsVisible() ) then
                     EventTracker_Toggle_Details();
                 end;
             end;
@@ -554,8 +548,8 @@
             EventTracker_Toggle_Main();
 
         elseif ( command == "resetpos" ) then
-            EventTrackerFrame:ClearAllPoints();
-            EventTrackerFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0);
+            EventTracker.OptionsFrame:ClearAllPoints();
+            EventTracker.OptionsFrame:SetPoint("CENTER", UIParent, "CENTER", 0, 0);
 
         elseif ( command == "add" ) then
             -- Add event to be tracked
