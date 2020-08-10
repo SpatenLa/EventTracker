@@ -1,4 +1,4 @@
-## Interface: 80100
+## Interface: 80300
 ## Title: EventTracker
 ## Version: 3.1
 ## Author: fmeus
@@ -10,4 +10,5 @@ EventTracker_globals.lua
 EventTracker_events.lua
 EventTracker_en.lua
 EventTracker.lua
-EventTracker.xml
+EventTracker_options.lua
+## EventTracker.xml
